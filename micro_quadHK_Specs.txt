@@ -1,0 +1,35 @@
+INCH = 25.4;
+
+propDH = [3*INCH,5];
+
+motorCenters= [1.8*INCH,1.6*INCH]; //45.2,40.64
+motorDH=[10,14];
+motorWeigth=2;
+
+motorPropTrust=36;
+
+rxSize=[21,14,2];
+rxWeight=2;
+
+gyroSize=[20.32,15,4];
+gyroWeight=2;
+
+arduinoSize=[34,18,1.8];
+arduinoWeight=3;
+
+fcSize=[0,0,0];
+fcWeigth=0;
+
+escSize=[3.4,12.9,11.6];
+escWeigth=.6; //0.36; j'ajoute le poids des fils ici
+
+batSize=[24,43,9];
+batWeigth=19;
+
+ECHO: "diametre des hélices : ", 76.2, "mm"
+ECHO: "class : ", 122.343
+ECHO: "Lxlxh moteur a moteur : ", [101.44, 91.28, 60], "mm"
+ECHO: "Lxlxh hors tout : ", [167.64, 157.48, 19], "mm"
+ECHO: "poids total : ", 29.4, "g"
+ECHO: "poids limite : ", 48, "g"
+ECHO: "trust total : ", 144, "g"
