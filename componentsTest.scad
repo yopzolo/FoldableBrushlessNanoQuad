@@ -3,19 +3,24 @@ include <components.scad>
 
 *motorMock();
 *motorTest();
-*arduinoTest();
+arduinoTest();
 *gyroTest();
 *rxTest();
 
-allComponents();
+*allComponents();
 
 module arduinoTest() {
-	translate([-arduinoSize[0]/2-strongThicknessHV[0],-arduinoSize[1],0])cube([arduinoSize[0]+2*strongThicknessHV[0], 2*arduinoSize[1], minimumThicknessHV[1]]);
-	translate([0, 0, minimumThicknessHV[1]])
 	difference() {
-		arduinoHull();
-		#arduinoMock();
+	union() {
+		hull(){
+			translate([-arduinoSize[0]/2+strongThicknessHV[0],0,0])cylinder(r=arduinoSize[1]/2+2*strongThicknessHV[0], h=strongThicknessHV[1]);
+			translate([arduinoSize[0]/2-strongThicknessHV[0],0,0])cylinder(r=arduinoSize[1]/2+2*strongThicknessHV[0], h=strongThicknessHV[1]);
+		}
+
+		translate([0, 0, strongThicknessHV[1]])arduinoHull();
 	}
+	translate([0, 0, strongThicknessHV[1]])arduinoMock();
+}
 }
 
 module gyroTest(){

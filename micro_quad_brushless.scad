@@ -1,3 +1,9 @@
+//TODO
+//
+// reculer l'arduino les connecteur gênes la fermeture
+// nouvelle dimension du recepteur ppm
+// réduire le poid du bodyBottom
+//
 
 include <constants.scad>
 include <components.scad>
@@ -8,7 +14,7 @@ part(part);
 
 propDH = [3*INCH,5];
 
-socketCenters = [[17,26],[23,-27]];
+socketCenters = [[17,26],[24,-27]]; //[[17,26],[23,-27]];
 motorCenters= [2*INCH,1.8*INCH]; //45.2,40.64
 
 globalSize = [propDH[0]+2*motorCenters[0], propDH[0]+2*motorCenters[1]];
@@ -39,9 +45,7 @@ module part(part){
 	}
 }
 
-
-batteryArduinoSpace = 4;
-
+batteryArduinoSpace = 7;
 bodySize = [batSize[0]+2*strongThicknessHV[0],batSize[1]+2*strongThicknessHV[0]+batteryArduinoSpace,arduinoSize[2]+2*strongThicknessHV[1]];
 
 batOffset=0;
@@ -58,18 +62,14 @@ module bodyTop(){
 			union() {
 
 				bodyBase();
+				translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2,0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]]);
 
-				*translate(-bodySize/2+strongThicknessHV[1]*[0,0,1])box([bodySize[0],bodySize[1],bodySize[2]/2-strongThicknessHV[1]],minimumThicknessHV[0]);
-
-				translate([-arduinoSize[0]/2,-batSize[1]/2-batteryArduinoSpace-arduinoSize[1]+batOffset,0])cube([arduinoSize[0],10,strongThicknessHV[1]]);
-				translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoHull();
 				translate(gyroOffset)gyroHull();
 				translate(rxOffset)rotate([0,0,90])rxHull();
 
 				translate(rxOffset+[0,rxSize[1]/2-3,strongThicknessHV[1]/2])cube([bodySize[0],2,strongThicknessHV[1]], center = true);
 			}
 
-			color("green")translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoMock();
 			color("green")translate(gyroOffset+[0,0,gyroFullThickness-0.01])rotate([180,0,0])gyroMock();
 			color("green")translate(rxOffset)rotate([0,0,90])rxMock();
 
@@ -91,33 +91,30 @@ module bodyTop(){
 
 module bodyBottom(){
 	translate([0,0,-bodySize[2]/2]){
-		difference() {
-			union() {
+//		difference() {
+//			union() {
 				bodyBase();
 	
-				*translate(-bodySize/2+strongThicknessHV[1]*[0,0,1])box([bodySize[0],bodySize[1],bodySize[2]/2-strongThicknessHV[1]],minimumThicknessHV[0]);
+			//	*translate(-bodySize/2+strongThicknessHV[1]*[0,0,1])box([bodySize[0],bodySize[1],bodySize[2]/2-strongThicknessHV[1]],minimumThicknessHV[0]);
 
-				translate([-arduinoSize[0]/2,-batSize[1]/2-batteryArduinoSpace-arduinoSize[1]+batOffset,0])cube([arduinoSize[0],10,strongThicknessHV[1]]);
-				translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoHull();
-			}
-			color("green")translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoMock();
-			translate([0, batOffset, 0])
-			copy_mirror([0,1,0]){
-			copy_mirror([1,0,0]){
-					for (x = [0:3*strongThicknessHV[0]:bodySize[0]/2-2*strongThicknessHV[0]]) {
-						translate([x,3/2*strongThicknessHV[0],0]){
-						#hull() {
-							cylinder(r=strongThicknessHV[0], h=strongThicknessHV[1],$fn=40);
-							translate([0,bodySize[1]/3,0])cylinder(r=strongThicknessHV[0], h=strongThicknessHV[1],$fn=40);
-						}
-					}
-				}
-				}
-			}
-		}
-		*%color("green")translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoMock();
+//			}
+//			*translate([0, batOffset, 0])
+//			copy_mirror([0,1,0]){
+//			copy_mirror([1,0,0]){
+//					for (x = [0:3*strongThicknessHV[0]:bodySize[0]/2-2*strongThicknessHV[0]]) {
+//						translate([x,3/2*strongThicknessHV[0],0]){
+//						hull() {
+//							cylinder(r=strongThicknessHV[0], h=strongThicknessHV[1],$fn=40);
+//							translate([0,bodySize[1]/3,0])cylinder(r=strongThicknessHV[0], h=strongThicknessHV[1],$fn=40);
+//						}
+//					}
+//				}
+//				}
+//			}
+//		}
+//		*%color("green")translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoMock();
 	}
-	%translate([-batSize[0]/2,-batSize[1]/2+batOffset,-bodySize[2]/2+strongThicknessHV[1]])cube(batSize);
+//	*%translate([-batSize[0]/2,-batSize[1]/2+batOffset,-bodySize[2]/2+strongThicknessHV[1]])cube(batSize);
 }
 
 module box(outerSize,thickness){
@@ -127,7 +124,7 @@ module box(outerSize,thickness){
 	}
 }
 
-socketLenght = 20;
+socketLenght = 15;
 springLenght = 5;
 
 motorSocketRad = pinRad+0;
@@ -139,8 +136,7 @@ module armSocketHull(){
 }
 
 module armSocket(){
-	socketLenght = 20;
-	springLenght = 5;
+
 
 	difference() {
 		union() {
@@ -172,17 +168,47 @@ module armSocket(){
 	}
 }
 
+
 module bodyBase(){
 	baseOffset=2;
 
 	difference() {
 		union(){
-			translate([-bodySize[0]/2,-bodySize[1]/2+baseOffset,0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]]);
+
+			*hull() {
+				copy_mirror([1,0,0])
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			}
+
+			hull() {
+				copy_mirror([1,0,0])
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			}
+
+			*copy_mirror([1,0,0])hull() {
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
+				translate([-socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			}
 			
+			copy_mirror([1,0,0])hull() {
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
+				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			}
+
+			copy_mirror([1,0,0])hull() {
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
+				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			}
+
+			hull() {
+				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
+				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			}
 			*#copy_mirror([1,0,0])
 				linear_extrude(strongThicknessHV[1])
 					import("microQuadShape.dxf");
 		}
+		
 
 		copy_mirror(vec=[1,0,0]){
 			translate([socketCenters[0][0], socketCenters[0][1], 0])
@@ -201,6 +227,11 @@ module bodyBase(){
 			rotate([0,0,armAngles[1]]) armSocket();
 	}
 
+	difference() {
+			translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoHull();
+			translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoMock();
+
+	}
 	
 }
 
@@ -303,7 +334,7 @@ module composition(armAngles,exploded=false){
 
 	foldedSize = [2*socketCenters[1][0]+10,2*socketCenters[0][1]+10,bodySize[2]+12];
 	echo ("folded Size Lxlxh : ", foldedSize, "mm");
-	%translate([0,0,6])cube(foldedSize,center = true);
+	*%translate([0,0,6])cube(foldedSize,center = true);
 }
 
 

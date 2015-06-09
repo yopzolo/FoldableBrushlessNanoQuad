@@ -4,7 +4,9 @@ include <constants.scad>
 *motorMock();
 *gyroMock();
 
-arduinoSize = [34,2.3,18];
+
+// Main Arduino pro micro
+arduinoSize = [34,2.3,18]; //[34,2.3,18]; ok values
 
 module arduinoMock(){
 		translate([0,0,arduinoSize[2]/2])cube(arduinoSize,center = true);	
@@ -18,15 +20,12 @@ module arduinoHull(){
 	clipThickness = .9;
 	
 	intersection() {
-		translate([-arduinoSize[0]/2-strongThicknessHV[0],-arduinoSize[1],0])cube([arduinoSize[0]+2*strongThicknessHV[0], 2*strongThicknessHV[1]+arduinoSize[1], clipThickness]);
+		translate([-arduinoSize[0]/2-strongThicknessHV[0],-arduinoSize[1]/2-strongThicknessHV[1],0])cube([arduinoSize[0]+2*strongThicknessHV[0], 2*strongThicknessHV[1]+arduinoSize[1], clipThickness]);
 		translate([0,0,-arduinoSize[1]+2*clipThickness])rotate([0, 90, 0])cylinder(r=arduinoSize[1], h=arduinoSize[0]+2*strongThicknessHV[1]-.001,$fn=40,center = true);
 	}
-	*for (i = [-1,1]) {
-		translate([i*(arduinoSize[0]/2+arduinoSize[1]-clipThickness), 0, minimumThicknessHV[1]])
-		cylinder(r=arduinoSize[1], h=arduinoSize[2]/2,$fn=40);
-	}	
 
-	translate([INCH/10,-arduinoSize[1]/2-minimumThicknessHV[0],0])cube([3/10*INCH,2*minimumThicknessHV[0]+arduinoSize[1],INCH/10]);
+	//TODO remove after test print
+	*translate([INCH/10,-arduinoSize[1]/2-minimumThicknessHV[0],0])cube([3/10*INCH,2*minimumThicknessHV[0]+arduinoSize[1],INCH/10]);
 }
 
 // gyro / acc
