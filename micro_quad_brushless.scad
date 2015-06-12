@@ -1,20 +1,26 @@
 //TODO
 //
-// reculer l'arduino les connecteur gênes la fermeture
-// nouvelle dimension du recepteur ppm
-// réduire le poid du bodyBottom
+// nouvelle dimension du recepteur ppm ou utiliser MWC ?
+//  -> demonter le micro actuel et peser toute l'electronique avec les soudures, comparer avec MWC + stepup de.5g ..5 de soudures..
 //
+//DONE
+// reculer l'arduino les connecteur gênes la fermeture
+// réduire le poid du bodyBottom
+
+
+$fs=.5;
+$fa=5;
 
 include <constants.scad>
 include <components.scad>
 
-part = 0; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
+part = 4; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
 part(part);
 
 
 propDH = [3*INCH,5];
 
-socketCenters = [[17,26],[24,-27]]; //[[17,26],[23,-27]];
+socketCenters = [[17,26],[24,-26]]; //[[17,26],[23,-27]];
 motorCenters= [2*INCH,1.8*INCH]; //45.2,40.64
 
 globalSize = [propDH[0]+2*motorCenters[0], propDH[0]+2*motorCenters[1]];
@@ -24,7 +30,7 @@ deltas=[[motorCenters[0]-socketCenters[0][0],motorCenters[1]-socketCenters[0][1]
 armLength=floor(max(sqrt(pow(deltas[0][1],2)+pow(deltas[0][0],2)),sqrt(pow(deltas[1][1],2)+pow(deltas[1][0],2))));
 armAngles = [atan(deltas[0][1]/deltas[0][0]),-atan(deltas[1][1]/deltas[1][0])];
 
-armAnglesFolded=[-94,87];
+armAnglesFolded=[-92,87];
 
 module part(part){
 	if (part == 0){
@@ -45,46 +51,45 @@ module part(part){
 	}
 }
 
-batteryArduinoSpace = 7;
-bodySize = [batSize[0]+2*strongThicknessHV[0],batSize[1]+2*strongThicknessHV[0]+batteryArduinoSpace,arduinoSize[2]+2*strongThicknessHV[1]];
+batteryArduinoSpace = 6;
+bodySize = [gyroSize[0]+2*strongThicknessHV[0],batSize[1]+2*strongThicknessHV[0]+batteryArduinoSpace,arduinoSize[2]+2*strongThicknessHV[1]];
 
 batOffset=0;
 
 module bodyTop(){
 	batteryEscSpace = 2;
-	escSpace = 7;
+	//escSpace = 7;
 	
-	gyroOffset = [0,2,0];
-	rxOffset = [0,19,0];
+	gyroOffset = [0,14,0];
+	rxOffset = [0,-10.5,0];
+	rxOrientation = [0,0,00];
 
 	translate([0,0,-bodySize[2]/2]){
 		difference() {
 			union() {
 
 				bodyBase();
-				translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2,0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]]);
+				#translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]+2*minimumThicknessHV[1]]);
 
 				translate(gyroOffset)gyroHull();
-				translate(rxOffset)rotate([0,0,90])rxHull();
-
-				translate(rxOffset+[0,rxSize[1]/2-3,strongThicknessHV[1]/2])cube([bodySize[0],2,strongThicknessHV[1]], center = true);
+				translate(rxOffset)rotate(rxOrientation)rxHull();
 			}
 
 			color("green")translate(gyroOffset+[0,0,gyroFullThickness-0.01])rotate([180,0,0])gyroMock();
-			color("green")translate(rxOffset)rotate([0,0,90])rxMock();
+			color("green")translate(rxOffset)rotate(rxOrientation)rxMock();
 
 			copy_mirror(vec=[1,0,0]){
 				translate([socketCenters[0][0], socketCenters[0][1], 0])
 				rotate([0,0,armAnglesFolded[0]])
-				translate([armLength,0,0]){
-					cylinder(r=motorRHTop[0], h=2*strongThicknessHV[0], center=false, $fn=40);
-					rotate([0,0,90])translate([0,-motorRHTop[0],0])cube([2*motorRHTop[0],2*motorRHTop[0],2*strongThicknessHV[0]]);
+				translate([armLength,0,-.1]){
+					cylinder(r=motorRHTop[0], h=2*strongThicknessHV[1]+.002, center=false);
+					rotate([0,0,90])translate([0,-motorRHTop[0],0])cube([2*motorRHTop[0],2*motorRHTop[0],2*strongThicknessHV[1]+.002]);
 				}
 			}
 		}
 		%translate([0,-batSize[1]/2-batteryArduinoSpace+batOffset,strongThicknessHV[1]])arduinoMock();
 		%translate(gyroOffset+[0,0,gyroFullThickness-0.01])rotate([180,0,0])gyroMock();
-		%translate(rxOffset)rotate([0,0,90])rxMock();
+		%translate(rxOffset)rotate(rxOrientation)rxMock();
 	}
 }
 
@@ -131,7 +136,7 @@ motorSocketRad = pinRad+0;
 armRad = 2.1;
 
 module armSocketHull(){
- translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=2*strongThicknessHV[1], $fn=40);
+ translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=2*strongThicknessHV[1]);
  translate([-socketLenght,-(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]]);
 }
 
@@ -140,28 +145,28 @@ module armSocket(){
 
 	difference() {
 		union() {
-			cylinder(r=motorSocketRad+strongThicknessHV[0], h=strongThicknessHV[1], $fn=40);
+			cylinder(r=motorSocketRad+strongThicknessHV[0], h=strongThicknessHV[1]);
 
 			translate([-socketLenght,-(motorSocketRad+strongThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+strongThicknessHV[0]),strongThicknessHV[1]]);
 			
 			difference() {
 				union() {
-					translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=3/2*strongThicknessHV[1], $fn=40);
+					translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=3/2*strongThicknessHV[1]);
 					translate([-socketLenght,-(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]]);
 					}
 
-				translate([0,0,0])cylinder(r=motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0],h=2*strongThicknessHV[1]+.001, $fn=40);
+				translate([0,0,0])cylinder(r=motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0],h=2*strongThicknessHV[1]+.001);
 				translate([-springLenght,-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([springLenght,2*(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),2*strongThicknessHV[1]+.001]);
 				translate([-(socketLenght-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0])),-(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]])cube([socketLenght-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),2*(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),2*strongThicknessHV[1]+.001]);
 
 			}
 
-			translate([0,0,strongThicknessHV[1]])cylinder(r=motorSocketRad-tightFitThickness, h=strongThicknessHV[1], $fn=40);
+			translate([0,0,strongThicknessHV[1]])cylinder(r=motorSocketRad-tightFitThickness, h=strongThicknessHV[1]);
 		}
-		cylinder(r=pinRad, h=100, $fn=40);
+		cylinder(r=pinRad, h=100);
 
 		for (z = [-90:90:90]) {
-			rotate([0,0,z])translate([armRad+minimumThicknessHV[0],0,armRad+strongThicknessHV[1]+tightFitThickness])rotate([0,90,0])cylinder(r=armRad+tightFitThickness,h=armLength,$fn=40);	
+			rotate([0,0,z])translate([armRad+minimumThicknessHV[0],0,armRad+strongThicknessHV[1]+tightFitThickness])rotate([0,90,0])cylinder(r=armRad+tightFitThickness,h=armLength);	
 		}
 		
 					
@@ -177,32 +182,32 @@ module bodyBase(){
 
 			*hull() {
 				copy_mirror([1,0,0])
-				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			hull() {
 				copy_mirror([1,0,0])
-				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
-			*copy_mirror([1,0,0])hull() {
-				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
-				translate([-socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+			*#copy_mirror([1,0,0])hull() {
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 			
 			copy_mirror([1,0,0])hull() {
-				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
-				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			copy_mirror([1,0,0])hull() {
-				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
-				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			hull() {
-				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);	
-				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1], $fn=40);
+				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 			*#copy_mirror([1,0,0])
 				linear_extrude(strongThicknessHV[1])
@@ -241,7 +246,7 @@ module arm(){
 
 	cablePassRad=armRad-2*minimumThicknessHV[1];
 	echo ("cablePassRad : ",cablePassRad);
-	escDist=[escSize[0]/2+motorSocketRad+strongThicknessHV[1]+7,0,-1.3];
+	escDist=[escSize[0]/2+motorSocketRad+strongThicknessHV[1]+7,0,bodySize[2]/2-escSize[2]/2-2*armRad-strongThicknessHV[1]];
 	cornerRad=bodySize[2]-2*strongThicknessHV[1]-motorRH[1]-armRad;
 
 	corner=[cornerRad+armRad,2*armRad,cornerRad+armRad];
@@ -252,13 +257,13 @@ module arm(){
 				//*translate([armLength,0,0])sphere(armWithCablePass,$fn=40);
 				//translate([armLength,0,-3])sphere(2.27,$fn=40);
 				
-				cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1],$fn=40, center = true);
+				cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
 
 				translate([armLength,0,bodySize[2]/2-motorRH[1]-strongThicknessHV[1]])motorHull();
 				
 				//hull() {
-					translate([0,0,bodySize[2]/2-armRad-strongThicknessHV[1]])rotate([0,90,0])cylinder(r=armRad,h=armLength,$fn=40);
-					translate([0,0,-bodySize[2]/2+armRad+strongThicknessHV[1]])rotate([0,90,0])cylinder(r=armRad,h=armLength-cornerRad,$fn=40);
+					translate([0,0,bodySize[2]/2-armRad-strongThicknessHV[1]])rotate([0,90,0])cylinder(r=armRad,h=armLength);
+					translate([0,0,-bodySize[2]/2+armRad+strongThicknessHV[1]])rotate([0,90,0])cylinder(r=armRad,h=armLength-cornerRad);
 					
 					translate([armLength-corner[0]+armRad,-corner[1]/2,-bodySize[2]/2+strongThicknessHV[1]])
 						intersection() {
@@ -266,39 +271,39 @@ module arm(){
 
 							translate([0, corner[1]/2, corner[2]])
 							rotate([90,0,0])
-							rotate_extrude($fn=40){
+							rotate_extrude(){
 								translate([corner[0]-armRad, 0])
-								circle(armRad,$fn=40);
+								circle(armRad);
 						}
 				}
 
 				//}	
 			}
 
-			cylinder(r=pinRad,h=100,center=true,$fn=40);
-			translate([0,0,bodySize[2]/2-2*strongThicknessHV[1]+.001])cylinder(r=motorSocketRad, h=strongThicknessHV[1],$fn=40);
-			translate([0,0,-bodySize[2]/2+strongThicknessHV[1]-.001])cylinder(r=motorSocketRad, h=strongThicknessHV[1],$fn=40);
+			cylinder(r=pinRad,h=100,center=true);
+			translate([0,0,bodySize[2]/2-2*strongThicknessHV[1]+.001])cylinder(r=motorSocketRad, h=strongThicknessHV[1]);
+			translate([0,0,-bodySize[2]/2+strongThicknessHV[1]-.001])cylinder(r=motorSocketRad, h=strongThicknessHV[1]);
 
 			translate(escDist)cube(escSize, center = true);
 
-			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])cylinder(r=cablePassRad,h=armLength-corner[0]+armRad-motorSocketRad-strongThicknessHV[0]-escSize[0]/2-escDist[0],$fn=40);
-			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])sphere(r=cablePassRad,$fn=40);
-			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,0,0])cylinder(r=cablePassRad,h=2*strongThicknessHV[1],$fn=40);
+			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])cylinder(r=cablePassRad,h=armLength-corner[0]+armRad-motorSocketRad-strongThicknessHV[0]-escSize[0]/2-escDist[0]);
+			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])sphere(r=cablePassRad);
+			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,0,0])cylinder(r=cablePassRad,h=2*strongThicknessHV[1]);
 			
 			#translate([armLength-corner[0]+armRad,-corner[1]/2,-bodySize[2]/2+strongThicknessHV[1]])
 				intersection() {
 					cube(corner);
 					translate([0, corner[1]/2, corner[2]])
 					rotate([90,0,0])
-					rotate_extrude($fn=40){
+					rotate_extrude(){
 						translate([corner[0]-armRad, 0])
-						circle(cablePassRad,$fn=40);
+						circle(cablePassRad);
 					}
 				}
 								
 		translate([armLength, 0, bodySize[2]/2-strongThicknessHV[1]-motorRH[1]]){
 			motorMock();
-			*translate([0, 0, 0])cylinder(r1=cablePassRad,r2=motorRH[0],h=2*strongThicknessHV[1],$fn=40);	
+			*translate([0, 0, 0])cylinder(r1=cablePassRad,r2=motorRH[0],h=2*strongThicknessHV[1]);	
 		}
 		
 

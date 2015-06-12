@@ -60,7 +60,7 @@
 //#define MINTHROTTLE 1120 // for Super Simple ESCs 10A
 //#define MINTHROTTLE 1064 // special ESC (simonk)
 //#define MINTHROTTLE 1050 // for brushed ESCs like ladybird
-#define MINTHROTTLE 1250 // (*) (**)
+#define MINTHROTTLE 1200 // (*) (**)
 
 /****************************    Motor maxthrottle    *******************************/
 /* this is the maximum value for the ESCs at full power, this value can be increased up to 2000 */
@@ -330,7 +330,7 @@
 /****************************    PPM Sum Reciver    ***********************************/
 /* The following lines apply only for specific receiver with only one PPM sum signal, on digital PIN 2
  Select the right line depending on your radio brand. Feel free to modify the order in your PPM order is different */
-//#define SERIAL_SUM_PPM         ROLL,PITCH,THROTTLE,YAW,AUX1,AUX2 //For Graupner/Spektrum
+#define SERIAL_SUM_PPM         ROLL,PITCH,THROTTLE,YAW,AUX1,AUX2 //For Graupner/Spektrum
 //#define SERIAL_SUM_PPM         ROLL,PITCH,THROTTLE,YAW,AUX1,AUX2,AUX3,AUX4,8,9,10,11 //For Robe/Hitec/Futaba
 //#define SERIAL_SUM_PPM         ROLL,PITCH,YAW,THROTTLE,AUX1,AUX2,AUX3,AUX4,8,9,10,11 //For Multiplex
 //#define SERIAL_SUM_PPM         PITCH,ROLL,THROTTLE,YAW,AUX1,AUX2,AUX3,AUX4,8,9,10,11 //For some Hitec/Sanwa/Others
@@ -343,7 +343,7 @@
  Spektrum Satellites are 3V devices.  DO NOT connect to 5V!
  For MEGA boards, attach sat grey wire to RX1, pin 19. Sat black wire to ground. Sat orange wire to Mega board's 3.3V (or any other 3V to 3.3V source).
  For PROMINI, attach sat grey to RX0.  Attach sat black to ground. */
-#define SPEKTRUM 1024
+//#define SPEKTRUM 1024
 //#define SPEKTRUM 2048
 //#define SPEK_SERIAL_PORT 0    // Forced to 0 on Pro Mini and single serial boards; Set to your choice of 0, 1, or 2 on any Mega based board (defaults to 1 on Mega).
 //**************************
@@ -461,7 +461,7 @@
 
 /******                Serial com speed    *********************************/
 /* This is the speed of the serial interfaces */
-#define SERIAL0_COM_SPEED 115200
+#define SERIAL0_COM_SPEED 57600
 #define SERIAL1_COM_SPEED 115200
 #define SERIAL2_COM_SPEED 115200
 #define SERIAL3_COM_SPEED 115200

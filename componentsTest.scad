@@ -1,11 +1,14 @@
 include <constants.scad>
 include <components.scad>
 
+$fs=1;
+$fa=10;
+
 *motorMock();
 *motorTest();
-arduinoTest();
+*arduinoTest();
 *gyroTest();
-*rxTest();
+rxTest();
 
 *allComponents();
 
@@ -41,7 +44,7 @@ module rxTest(){
 			translate([0,0,strongThicknessHV[1]/2])cube(rxSize+[2,2,-rxSize[2]+strongThicknessHV[1]],center = true);
 			rxHull();
 		}
-		#translate([0,0,-0.001])rxMock();
+		translate([0,0,-0.001])rxMock();
 	}
 }
 

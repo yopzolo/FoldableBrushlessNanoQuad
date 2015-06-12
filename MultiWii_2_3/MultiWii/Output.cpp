@@ -366,6 +366,7 @@ void writeMotors() { // [1000;2000] => [125;250]
 
   /********  Specific PWM Timers & Registers for the atmega328P (Promini)   ************/
   #if defined(PROMINI)
+    #if (F_CPU > 8000000L)
     #if (NUMBER_MOTOR > 0)
       #ifndef EXT_MOTOR_RANGE 
         OCR1A = motor[0]>>3; //  pin 9
@@ -418,6 +419,43 @@ void writeMotors() { // [1000;2000] => [125;250]
       atomicPWM_PIN12_highState = ((motor[7]-1000)>>2)+5;
       atomicPWM_PIN12_lowState  = 245-atomicPWM_PIN12_highState;
     #endif
+      
+    #else // 8mhz
+
+   #if (NUMBER_MOTOR > 0) // Timer 1 A & B [1000:2000] => [8000:16000]
+      OCR1A = motor[0]<<2; //  pin 9
+    #endif
+    #if (NUMBER_MOTOR > 1)
+      OCR1B = motor[1]<<2; //  pin 10
+    #endif
+    #if (NUMBER_MOTOR > 2)
+      #ifndef EXT_MOTOR_RANGE
+        OCR2A = motor[2]>>3; //  pin 11
+      #else
+        OCR2A = ((motor[2]>>2) - 250) + 2;
+      #endif
+    #endif
+    #if (NUMBER_MOTOR > 3)
+      #ifndef EXT_MOTOR_RANGE
+        OCR2B = motor[3]>>3; //  pin 3
+      #else
+        OCR2B = ((motor[3]>>2) - 250) + 2;
+      #endif
+    #endif
+    #if (NUMBER_MOTOR > 4) //note: EXT_MOTOR_RANGE not possible here
+      atomicPWM_PIN6_highState = ((motor[4]-1000)>>3)+3 ;
+      atomicPWM_PIN6_lowState  = 122-atomicPWM_PIN6_highState;
+      atomicPWM_PIN5_highState = ((motor[5]-1000)>>3)+3;
+      atomicPWM_PIN5_lowState  = 122-atomicPWM_PIN5_highState;
+    #endif
+    #if (NUMBER_MOTOR > 6) //note: EXT_MOTOR_RANGE not possible here
+      atomicPWM_PINA2_highState = ((motor[6]-1000)>>3)+3;
+      atomicPWM_PINA2_lowState  = 122-atomicPWM_PINA2_highState;
+      atomicPWM_PIN12_highState = ((motor[7]-1000)>>3)+3;
+      atomicPWM_PIN12_lowState  = 122-atomicPWM_PIN12_highState;
+    #endif
+
+  #endif    
   #endif
 }
 
@@ -532,6 +570,7 @@ void initOutput() {
   
   /********  Specific PWM Timers & Registers for the atmega328P (Promini)   ************/
   #if defined(PROMINI)
+      #if (F_CPU > 8000000L)
     #if (NUMBER_MOTOR > 0)
       TCCR1A |= _BV(COM1A1); // connect pin 9 to timer 1 channel A
     #endif
@@ -550,6 +589,32 @@ void initOutput() {
         pinMode(5,INPUT);pinMode(6,INPUT);     // we reactivate the INPUT affectation for these two PINs
         pinMode(A0,OUTPUT);pinMode(A1,OUTPUT);
       #endif
+    #endif
+    
+        #else
+       #if (NUMBER_MOTOR > 0)
+   
+    TCCR1A |= (1<<WGM11); TCCR1A &= ~(1<<WGM10); TCCR1B |= (1<<WGM13);  // phase correct mode
+      TCCR1B &= ~(1<<CS11); ICR1 |= 0x2000; // no prescaler & TOP to 16383;
+      TCCR1A |= _BV(COM1A1); // connect pin 9 to timer 1 channel A
+    #endif
+    #if (NUMBER_MOTOR > 1)
+      TCCR1A |= _BV(COM1B1); // connect pin 10 to timer 1 channel B
+    #endif
+    #if (NUMBER_MOTOR > 2)
+      TCCR2A |= _BV(COM2A1) | _BV(CS21) | _BV(CS20); // connect pin 11 to timer 2 channel A prescale32
+    #endif
+    #if (NUMBER_MOTOR > 3)
+      TCCR2A |= _BV(COM2B1) ; // connect pin 3 to timer 2 channel B
+    #endif
+    #if (NUMBER_MOTOR > 5)  // PIN 5 & 6 or A0 & A1
+      initializeSoftPWM();
+      #if defined(A0_A1_PIN_HEX) || (NUMBER_MOTOR > 6)
+        pinMode(5,INPUT);pinMode(6,INPUT);     // we reactivate the INPUT affectation for these two PINs
+        pinMode(A0,OUTPUT);pinMode(A1,OUTPUT);
+      #endif
+    #endif
+    
     #endif
   #endif
 
@@ -617,7 +682,12 @@ void initializeServo() {
       TIMSK0 |= (1<<OCIE0A); // Enable CTC interrupt
       #define SERVO_ISR TIMER0_COMPA_vect
       #define SERVO_CHANNEL OCR0A
-      #define SERVO_1K_US 250
+      #if (F_CPU > 8000000L)
+        #define SERVO_1K_US 250
+      #else
+        #define SERVO_1K_US 125
+      #endif
+      
     #endif
     #if (defined(PROMICRO) && !defined(HWPWM6)) // uses timer 3 Comperator A (11 bit)
       TCCR3A &= ~(1<<WGM30) & ~(1<<WGM31); //normal counting & no prescaler
