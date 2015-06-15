@@ -5,10 +5,10 @@ $fs=1;
 $fa=10;
 
 *motorMock();
-*motorTest();
+motorTest();
 *arduinoTest();
 *gyroTest();
-rxTest();
+*rxTest();
 
 *allComponents();
 

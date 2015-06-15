@@ -123,10 +123,10 @@ module motorMock(){
 		translate([0,0,motorRHBottom[1]-motorRHMiddle[1]])cylinder(r1=motorRHBottom[0],r2=motorRHMiddle[0], h=motorRHMiddle[1]);
 		translate([-motorRHBottom[0]+minimumThicknessHV[0],0,0])cube([2*motorRHBottom[0]-2*minimumThicknessHV[0],motorRHTop[0],motorRH[1]]);
 	}
-	difference() {
+	//difference() {
 		translate([0,0,motorRHBottom[1]-strongThicknessHV[0]])cylinder(r=motorRHTop[0], h=motorRHTop[1]+strongThicknessHV[0]+.01);
-		*translate([0,0,motorRHBottom[1]-strongThicknessHV[0]-.01])cylinder(r=motorRHTop[0]-strongThicknessHV[1], h=strongThicknessHV[0]);	
-	}
+	//	#translate([0,0,motorRHBottom[1]-strongThicknessHV[0]-.01])cylinder(r=motorRHTop[0]-strongThicknessHV[1], h=strongThicknessHV[0]);	
+	//}
 
 	translate([0,0,motorRHBottom[1]+motorRHTop[1]])cylinder(r=motorRHPin[0], h=motorRHPin[1]);
 	}
@@ -137,14 +137,9 @@ module motorHull(){
 	union() {
 		difference() {
 			union() {
-				cylinder(r=motorRHBottom[0]+strongThicknessHV[0], h=motorRHBottom[1]);
-				translate([0,0,motorRHBottom[1]-motorRHMiddle[1]]){
-					intersection() {
-						translate([0,0,-strongThicknessHV[0]])cylinder(r=motorRH[0]+strongThicknessHV[0], h=motorRH[0]+strongThicknessHV[0]);
-						translate([0,0,motorRHMiddle[1]])sphere(r=motorRH[0]+strongThicknessHV[0]);
-				}
-			}
-			translate([0,0,motorRHBottom[1]])cylinder(r=motorRH[0]+strongThicknessHV[0], h=motorRHTop[1]);
+				cylinder(r=motorRHBottom[0]+minimumThicknessHV[0], h=motorRHBottom[1]);
+				translate([0,0,motorRHBottom[1]-motorRHMiddle[1]-2*strongThicknessHV[0]])cylinder(r1=motorRHBottom[0],r2=motorRH[0]+strongThicknessHV[0], h=motorRH[0]);
+				translate([0,0,motorRHBottom[1]-strongThicknessHV[0]])cylinder(r=motorRH[0]+strongThicknessHV[0], h=motorRHTop[1]+strongThicknessHV[0]);
 		}
 			rotate([0, 0, -90])
 			for (a = [45:45:315]) {

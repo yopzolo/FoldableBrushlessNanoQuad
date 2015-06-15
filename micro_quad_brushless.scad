@@ -132,7 +132,7 @@ module box(outerSize,thickness){
 socketLenght = 15;
 springLenght = 5;
 
-motorSocketRad = pinRad+0;
+motorSocketRad = pinRad+strongThicknessHV[0];
 armRad = 2.1;
 
 module armSocketHull(){
@@ -256,8 +256,13 @@ module arm(){
 			union() {
 				//*translate([armLength,0,0])sphere(armWithCablePass,$fn=40);
 				//translate([armLength,0,-3])sphere(2.27,$fn=40);
-				
-				cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
+				cylinder(r=pinRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
+
+				copy_mirror([0,0,1]){
+					translate([0,0,bodySize[2]/2-strongThicknessHV[1]-armRad])cylinder(r=motorSocketRad+strongThicknessHV[0],h=armRad);
+					#translate([0,0,bodySize[2]/2-strongThicknessHV[1]-2*armRad])cylinder(r2=motorSocketRad+strongThicknessHV[0],r1=motorSocketRad,h=armRad);
+			}
+				#*cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
 
 				translate([armLength,0,bodySize[2]/2-motorRH[1]-strongThicknessHV[1]])motorHull();
 				
