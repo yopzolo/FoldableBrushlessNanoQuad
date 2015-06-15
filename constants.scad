@@ -1,6 +1,6 @@
 INCH = 25.4;
 
-tightFitThickness = .1;
+tightFitThickness = .3;
 
 strongThicknessHV = [1,1.5];
 minimumThicknessHV = [.5,.3];

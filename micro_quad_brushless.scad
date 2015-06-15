@@ -14,7 +14,7 @@ $fa=5;
 include <constants.scad>
 include <components.scad>
 
-part = 4; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
+part = 0; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
 part(part);
 
 
@@ -34,7 +34,7 @@ armAnglesFolded=[-92,87];
 
 module part(part){
 	if (part == 0){
-		composition(armAngles,false);
+		composition(armAngles,true);
 		*composition(armAnglesFolded,false);
 	}
 	if (part == 1){
@@ -69,7 +69,7 @@ module bodyTop(){
 			union() {
 
 				bodyBase();
-				#translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]+2*minimumThicknessHV[1]]);
+				translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]+2*minimumThicknessHV[1]]);
 
 				translate(gyroOffset)gyroHull();
 				translate(rxOffset)rotate(rxOrientation)rxHull();
@@ -136,8 +136,8 @@ motorSocketRad = pinRad+strongThicknessHV[0];
 armRad = 2.1;
 
 module armSocketHull(){
- translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=2*strongThicknessHV[1]);
- translate([-socketLenght,-(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]]);
+ translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=2*strongThicknessHV[1]);
+ translate([-socketLenght,-(motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0]),strongThicknessHV[1]]);
 }
 
 module armSocket(){
@@ -145,27 +145,29 @@ module armSocket(){
 
 	difference() {
 		union() {
-			cylinder(r=motorSocketRad+strongThicknessHV[0], h=strongThicknessHV[1]);
 
-			translate([-socketLenght,-(motorSocketRad+strongThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+strongThicknessHV[0]),strongThicknessHV[1]]);
+			cylinder(r=motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0], h=strongThicknessHV[1]);
+
+			translate([-socketLenght,-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]]);
 			
 			difference() {
 				union() {
-					translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=3/2*strongThicknessHV[1]);
-					translate([-socketLenght,-(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]]);
+					translate([0,0,0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=3/2*strongThicknessHV[1]);
+					translate([-socketLenght,-(motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0]),0])cube([socketLenght,2*(motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0]),strongThicknessHV[1]]);
 					}
 
-				translate([0,0,0])cylinder(r=motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0],h=2*strongThicknessHV[1]+.001);
-				translate([-springLenght,-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),0])cube([springLenght,2*(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),2*strongThicknessHV[1]+.001]);
-				translate([-(socketLenght-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0])),-(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),strongThicknessHV[1]])cube([socketLenght-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),2*(motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0]),2*strongThicknessHV[1]+.001]);
+				translate([0,0,0])cylinder(r=motorSocketRad+strongThicknessHV[0]+2*minimumThicknessHV[0],h=2*strongThicknessHV[1]+.001);
+				translate([-springLenght,-(motorSocketRad+strongThicknessHV[0]+2*minimumThicknessHV[0]),0])cube([springLenght,2*(motorSocketRad+strongThicknessHV[0]+2*minimumThicknessHV[0]),2*strongThicknessHV[1]]);
+				translate([-(socketLenght-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0])),-(motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0]),strongThicknessHV[1]])cube([socketLenght-(motorSocketRad+strongThicknessHV[0]+minimumThicknessHV[0]),2*(motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0]),2*strongThicknessHV[1]+.001]);
 
 			}
 
-			translate([0,0,strongThicknessHV[1]])cylinder(r=motorSocketRad-tightFitThickness, h=strongThicknessHV[1]);
+			translate([0,0,strongThicknessHV[1]])cylinder(r=motorSocketRad, h=strongThicknessHV[1]);
 		}
 		cylinder(r=pinRad, h=100);
 
-		for (z = [-90:90:90]) {
+		rotate([0,0,0])translate([armRad+minimumThicknessHV[0],0,armRad+strongThicknessHV[1]+minimumThicknessHV[0]])rotate([0,90,0])cylinder(r=armRad+tightFitThickness,h=armLength);	
+		for (z = [-90,90]) {
 			rotate([0,0,z])translate([armRad+minimumThicknessHV[0],0,armRad+strongThicknessHV[1]+tightFitThickness])rotate([0,90,0])cylinder(r=armRad+tightFitThickness,h=armLength);	
 		}
 		
@@ -182,32 +184,32 @@ module bodyBase(){
 
 			*hull() {
 				copy_mirror([1,0,0])
-				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			hull() {
 				copy_mirror([1,0,0])
-				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			*#copy_mirror([1,0,0])hull() {
-				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
-				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 			
 			copy_mirror([1,0,0])hull() {
-				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
-				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
+				translate([socketCenters[0][0], socketCenters[0][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			copy_mirror([1,0,0])hull() {
-				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
-				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
+				translate([socketCenters[1][0], socketCenters[1][1], 0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 
 			hull() {
-				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);	
-				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+minimumThicknessHV[0],h=strongThicknessHV[1]);
+				translate([0,socketCenters[0][1]+socketCenters[0][0]*tan(-armAngles[0]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);	
+				translate([0,socketCenters[1][1]+socketCenters[1][0]*tan(-armAngles[1]),0])cylinder(r=motorSocketRad+2*strongThicknessHV[0]+2*minimumThicknessHV[0],h=strongThicknessHV[1]);
 			}
 			*#copy_mirror([1,0,0])
 				linear_extrude(strongThicknessHV[1])
@@ -259,10 +261,10 @@ module arm(){
 				cylinder(r=pinRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
 
 				copy_mirror([0,0,1]){
-					translate([0,0,bodySize[2]/2-strongThicknessHV[1]-armRad])cylinder(r=motorSocketRad+strongThicknessHV[0],h=armRad);
-					#translate([0,0,bodySize[2]/2-strongThicknessHV[1]-2*armRad])cylinder(r2=motorSocketRad+strongThicknessHV[0],r1=motorSocketRad,h=armRad);
+					translate([0,0,bodySize[2]/2-strongThicknessHV[1]-armRad])cylinder(r=motorSocketRad+strongThicknessHV[0]+tightFitThickness,h=armRad);
+					translate([0,0,bodySize[2]/2-strongThicknessHV[1]-2*armRad])cylinder(r2=motorSocketRad+strongThicknessHV[0]+tightFitThickness,r1=pinRad+strongThicknessHV[0],h=armRad);
 			}
-				#*cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
+				*#cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
 
 				translate([armLength,0,bodySize[2]/2-motorRH[1]-strongThicknessHV[1]])motorHull();
 				
@@ -286,16 +288,16 @@ module arm(){
 			}
 
 			cylinder(r=pinRad,h=100,center=true);
-			translate([0,0,bodySize[2]/2-2*strongThicknessHV[1]+.001])cylinder(r=motorSocketRad, h=strongThicknessHV[1]);
-			translate([0,0,-bodySize[2]/2+strongThicknessHV[1]-.001])cylinder(r=motorSocketRad, h=strongThicknessHV[1]);
+			#translate([0,0,bodySize[2]/2-2*strongThicknessHV[1]+.001])cylinder(r=motorSocketRad+tightFitThickness, h=strongThicknessHV[1]);
+			#translate([0,0,-bodySize[2]/2+strongThicknessHV[1]-.001])cylinder(r=motorSocketRad+tightFitThickness, h=strongThicknessHV[1]);
 
 			translate(escDist)cube(escSize, center = true);
 
-			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])cylinder(r=cablePassRad,h=armLength-corner[0]+armRad-motorSocketRad-strongThicknessHV[0]-escSize[0]/2-escDist[0]);
-			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])sphere(r=cablePassRad);
-			#translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,0,0])cylinder(r=cablePassRad,h=2*strongThicknessHV[1]);
+			translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])cylinder(r=cablePassRad,h=armLength-corner[0]+armRad-motorSocketRad-strongThicknessHV[0]-escSize[0]/2-escDist[0]);
+			translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,90,0])sphere(r=cablePassRad);
+			translate([motorSocketRad+strongThicknessHV[0]+escSize[0]/2+escDist[0],0,-bodySize[2]/2+strongThicknessHV[1]+armRad])rotate([0,0,0])cylinder(r=cablePassRad,h=2*strongThicknessHV[1]);
 			
-			#translate([armLength-corner[0]+armRad,-corner[1]/2,-bodySize[2]/2+strongThicknessHV[1]])
+			translate([armLength-corner[0]+armRad,-corner[1]/2,-bodySize[2]/2+strongThicknessHV[1]])
 				intersection() {
 					cube(corner);
 					translate([0, corner[1]/2, corner[2]])
