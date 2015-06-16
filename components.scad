@@ -85,12 +85,8 @@ module rxMock(){
 		*translate([rxSize[0]/2-5, rxSize[1]/2, rxFullThickness/2-rxSize[2]/2])cube([3, 2, rxFullThickness-rxSize[2]], center= true);
 		*translate([rxSize[0]/2-5, -rxSize[1]/2, rxFullThickness/2-rxSize[2]/2])cube([3, 2, rxFullThickness-rxSize[2]], center= true);
 //	}
-	//translate([-rxSize[0]/2,rxSize[1]/2,rxFullThickness-rxSize[2]])translate([rxAntennaSize[0]/2,rxAntennaSize[1]/2])cube(rxAntennaSize+[0,0,0],center = true);
-	*#translate([rxSize[0]/2-rxAntennaSize[0],rxSize[1]/2,-0.01])rotate([2,0,0])cube(rxAntennaSize+[0,0,0]);
-	translate([rxSize[0]/2-rxAntennaSize[0],rxSize[1]/2+minimumThicknessHV[1]-rxAntennaSize[0],-0.01])cube([2*rxAntennaSize[0],2*rxAntennaSize[0],rxAntennaSize[2]]);
-
-	#translate([-rxSize[0]/2,rxSize[1]/2-rxAntennaSize[0],-0.01])rotate([2,0,90])cube(rxAntennaSize+[0,0,0]);
-	translate([-rxSize[0]/2-rxAntennaSize[0],rxSize[1]/2+minimumThicknessHV[1]-2*rxAntennaSize[0],-0.01])cube([2*rxAntennaSize[0],2*rxAntennaSize[0],rxAntennaSize[2]]);
+	#translate([rxSize[0]/2-rxAntennaSize[0],rxSize[1]/2+minimumThicknessHV[1]-rxAntennaSize[0],rxFullThickness-rxAntennaSize[2]])cube([2*rxAntennaSize[0],2*rxAntennaSize[0],rxAntennaSize[2]]);
+	#translate([-rxSize[0]/2-rxAntennaSize[0],rxSize[1]/2+minimumThicknessHV[1]-2*rxAntennaSize[0],rxFullThickness-rxAntennaSize[2]])cube([2*rxAntennaSize[0],2*rxAntennaSize[0],rxAntennaSize[2]]);
 
 }
 

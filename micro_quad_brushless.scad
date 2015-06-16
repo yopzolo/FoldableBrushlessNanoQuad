@@ -34,8 +34,8 @@ armAnglesFolded=[-92,87];
 
 module part(part){
 	if (part == 0){
-		composition(armAngles,true);
-		*composition(armAnglesFolded,false);
+		*composition(armAngles,true);
+		composition(armAnglesFolded,false);
 	}
 	if (part == 1){
 		plate();
@@ -51,7 +51,7 @@ module part(part){
 	}
 }
 
-batteryArduinoSpace = 6;
+batteryArduinoSpace = 7.5;
 bodySize = [gyroSize[0]+2*strongThicknessHV[0],batSize[1]+2*strongThicknessHV[0]+batteryArduinoSpace,arduinoSize[2]+2*strongThicknessHV[1]];
 
 batOffset=0;
@@ -69,7 +69,7 @@ module bodyTop(){
 			union() {
 
 				bodyBase();
-				translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],strongThicknessHV[1]+2*minimumThicknessHV[1]]);
+				#translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],gyroFullThickness-.01]);
 
 				translate(gyroOffset)gyroHull();
 				translate(rxOffset)rotate(rxOrientation)rxHull();
@@ -83,6 +83,7 @@ module bodyTop(){
 				rotate([0,0,armAnglesFolded[0]])
 				translate([armLength,0,-.1]){
 					cylinder(r=motorRHTop[0], h=2*strongThicknessHV[1]+.002, center=false);
+					translate([0,0,strongThicknessHV[1]+.1])cylinder(r=motorRHTop[0]+strongThicknessHV[0]+minimumThicknessHV[0], h=strongThicknessHV[1]+.002, center=false);
 					rotate([0,0,90])translate([0,-motorRHTop[0],0])cube([2*motorRHTop[0],2*motorRHTop[0],2*strongThicknessHV[1]+.002]);
 				}
 			}
@@ -264,8 +265,7 @@ module arm(){
 					translate([0,0,bodySize[2]/2-strongThicknessHV[1]-armRad])cylinder(r=motorSocketRad+strongThicknessHV[0]+tightFitThickness,h=armRad);
 					translate([0,0,bodySize[2]/2-strongThicknessHV[1]-2*armRad])cylinder(r2=motorSocketRad+strongThicknessHV[0]+tightFitThickness,r1=pinRad+strongThicknessHV[0],h=armRad);
 			}
-				*#cylinder(r=motorSocketRad+strongThicknessHV[0],h=bodySize[2]-2*strongThicknessHV[1], center = true);
-
+				
 				translate([armLength,0,bodySize[2]/2-motorRH[1]-strongThicknessHV[1]])motorHull();
 				
 				//hull() {
@@ -288,8 +288,10 @@ module arm(){
 			}
 
 			cylinder(r=pinRad,h=100,center=true);
-			#translate([0,0,bodySize[2]/2-2*strongThicknessHV[1]+.001])cylinder(r=motorSocketRad+tightFitThickness, h=strongThicknessHV[1]);
-			#translate([0,0,-bodySize[2]/2+strongThicknessHV[1]-.001])cylinder(r=motorSocketRad+tightFitThickness, h=strongThicknessHV[1]);
+			copy_mirror([0,0,1]){
+				translate([0,0,bodySize[2]/2-2*strongThicknessHV[1]+.001])cylinder(r=motorSocketRad+tightFitThickness, h=strongThicknessHV[1]);
+				translate([0,0,bodySize[2]/2-4*strongThicknessHV[1]+.002])cylinder(r2=motorSocketRad+tightFitThickness, r1=pinRad, h=2*strongThicknessHV[1]);
+			}
 
 			translate(escDist)cube(escSize, center = true);
 
