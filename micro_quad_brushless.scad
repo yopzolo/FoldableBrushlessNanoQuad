@@ -14,7 +14,7 @@ $fa=5;
 include <constants.scad>
 include <components.scad>
 
-part = 0; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
+part = 4; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
 part(part);
 
 
@@ -130,7 +130,7 @@ module box(outerSize,thickness){
 }
 
 socketLenght = 15;
-springLenght = 5;
+springLenght = 3;
 
 motorSocketRad = pinRad+strongThicknessHV[0];
 armRad = 2.1;
