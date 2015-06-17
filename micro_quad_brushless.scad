@@ -14,7 +14,7 @@ $fa=5;
 include <constants.scad>
 include <components.scad>
 
-part = 4; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
+part = 3; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
 part(part);
 
 
@@ -69,7 +69,7 @@ module bodyTop(){
 			union() {
 
 				bodyBase();
-				#translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],gyroFullThickness-.01]);
+				#translate([-bodySize[0]/2,-bodySize[1]/2-batteryArduinoSpace/2+arduinoSize[1],0])cube([bodySize[0],bodySize[1],gyroFullThickness-.05]);
 
 				translate(gyroOffset)gyroHull();
 				translate(rxOffset)rotate(rxOrientation)rxHull();
