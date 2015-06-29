@@ -14,7 +14,7 @@ $fa=5;
 include <constants.scad>
 include <components.scad>
 
-part = 3; //[0:composed 1:plate 2:body, 3:BodyCustomTop, 4:arm]
+part = 0; //[0:composed 1:composed folded 2:body, 3:BodyCustomTop, 4:arm, 5:plate]
 part(part);
 
 
@@ -34,11 +34,10 @@ armAnglesFolded=[-92,87];
 
 module part(part){
 	if (part == 0){
-		*composition(armAngles,true);
-		composition(armAnglesFolded,false);
+		composition(armAngles,true);
 	}
 	if (part == 1){
-		plate();
+		composition(armAnglesFolded,false);
 	}
 	if (part == 2){
 		bodyBottom();
@@ -48,6 +47,9 @@ module part(part){
 	}
 	if (part == 4){
 		arm();
+	}
+	if (part == 5){
+		plate();
 	}
 }
 

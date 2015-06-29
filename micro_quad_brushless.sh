@@ -7,6 +7,7 @@ mkdir export
 /./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/arm.stl micro_quad_brushless.scad -D part=4
 
 /./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/micro_quad_brushless.stl micro_quad_brushless.scad -D part=0
-/./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/plate.stl micro_quad_brushless.scad -D part=1
+/./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/micro_quad_brushless_folded.stl micro_quad_brushless.scad -D part=1
+#/./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/plate.stl micro_quad_brushless.scad -D part=5
 
-/./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/tests.stl componentsTest.scad
+#/./Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o export/tests.stl componentsTest.scad
