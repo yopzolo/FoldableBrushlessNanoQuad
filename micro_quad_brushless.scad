@@ -1,20 +1,10 @@
-//TODO
-//
-// nouvelle dimension du recepteur ppm ou utiliser MWC ?
-//  -> demonter le micro actuel et peser toute l'electronique avec les soudures, comparer avec MWC + stepup de.5g ..5 de soudures..
-//
-//DONE
-// reculer l'arduino les connecteur gênes la fermeture
-// réduire le poid du bodyBottom
-
-
-$fs=.5;
-$fa=5;
+$fs=1;
+$fa=10;
 
 include <constants.scad>
 include <components.scad>
 
-part = 0; //[0:composed 1:composed folded 2:body, 3:BodyCustomTop, 4:arm, 5:plate]
+part = 2; //[0:composed 1:composed folded 2:body, 3:BodyCustomTop, 4:arm, 5:plate]
 part(part);
 
 
