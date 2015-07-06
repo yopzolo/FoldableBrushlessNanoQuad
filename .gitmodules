@@ -1,3 +1,6 @@
 [submodule "KalmanFilter"]
 	path = KalmanFilter
 	url = https://github.com/TKJElectronics/KalmanFilter.git
+[submodule "Multiwii"]
+	path = Multiwii
+	url = git@78.241.14.20:Multiwii.git
